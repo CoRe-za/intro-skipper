@@ -1,0 +1,9 @@
+Source commit: 228516812f9be02c6cc52124a780a3ac62852415
+Base: 721697ae88f961200e5afee31204c35296957102
+Build: Release, .NET SDK 10.0.100, zero warnings/errors
+Full .NET suite: 1628 passed, 0 failed, 0 skipped
+Frontend suite: 8 passed
+CreditsRunner: 2 fixture files, default rule disabled, identical candidate ranges; 0 regressions
+FFmpeg: system 7.1.5 with chromaprint
+The runner reports different configuration shapes because the candidate adds an empty per-series list.
+No live Jellyfin server installation or recordings tested.
