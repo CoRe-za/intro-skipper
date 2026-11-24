@@ -9,6 +9,11 @@ import type { FieldKind, FieldSchema, KeysOfKind, ValuesOf } from "./field-spec.
 const PATTERN_TAIL = "(?![\\s:]+End)(\\s|:|$)";
 
 export const configSchema = {
+    IntroStartAtZeroSeriesIds: {
+        kind: "list",
+        label: "Series with introductions starting at zero",
+        description: "Choose this per series in Timestamps. Detected intro ends remain unchanged.",
+    },
     // General
     AutoDetectIntros: {
         kind: "checkbox",

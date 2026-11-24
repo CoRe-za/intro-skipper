@@ -101,6 +101,7 @@ internal static class ConfigHasher
     /// <param name="subtitlePreviewDetectionOverride">Optional season-level setting for subtitle preview detection.</param>
     /// <param name="includeSubtitleSettings">Whether to include subtitle settings in the mode hash. Disabling this returns the conventional-settings hash used to recognize subtitle-only changes.</param>
     /// <param name="chapterSource">The chapter source the analyzed chapters came from, when the season pass read them. <see langword="null"/> takes the setting.</param>
+    /// <param name="seriesId">The resolved series, used to hash only its effective zero-start introduction choice.</param>
     /// <returns>A compact hash; enabled subtitle detection adds a separate subtitle component to Recap or Preview.</returns>
     public static string Analysis(
         PluginConfiguration config,
@@ -113,7 +114,8 @@ internal static class ConfigHasher
         bool? subtitleRecapDetectionOverride = null,
         bool? subtitlePreviewDetectionOverride = null,
         bool includeSubtitleSettings = true,
-        ChapterSource? chapterSource = null)
+        ChapterSource? chapterSource = null,
+        Guid seriesId = default)
     {
         // The season pass reads chapters once, so a record names the source they came from,
         // not the setting at the moment the mode ran.
@@ -131,7 +133,7 @@ internal static class ConfigHasher
                 $"analysis|v1|mode={mode}|action={action}|prefer={config.PreferChromaprint}|chap={config.ChapterAnalyzerIntroductionPattern}|fullchap={config.FullLengthChapters}|sbchap={config.EnableSponsorBlockChapterDetection}",
                 $"|pct={analysisPercent}|limit={analysisLengthLimit}|min={config.MinimumIntroDuration}|max={config.MaximumIntroDuration}",
                 $"|fpbits={config.MaximumFingerprintPointDifferences}|skip={config.MaximumTimeSkip}|shift={config.InvertedIndexShift}|chromaprint={ffmpegValid}{ChromaprintStreamToken(config)}{SettledConsensusToken(config, mode, action, ffmpegValid)}",
-                $"{AdjustmentHash(config, mode)}{ChapterSourceToken(source)}"),
+                $"{AdjustmentHash(config, mode)}{ChapterSourceToken(source)}{(config.StartsIntrosAtZero(seriesId) ? "|introStart=zero-v1" : string.Empty)}"),
 
             // Frozen at v3 on purpose: the credits pass replaced the first-wins chain
             // without a bump, because a bump re-fingerprints and re-scans every season a chapter
@@ -186,7 +188,8 @@ internal static class ConfigHasher
             subtitleRecapDetectionOverride,
             subtitlePreviewDetectionOverride,
             includeSubtitleSettings: false,
-            chapterSource: source);
+            chapterSource: source,
+            seriesId: seriesId);
         return $"{SubtitleHashPrefix}{conventionalHash}:{hash}";
     }
 

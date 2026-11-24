@@ -31,6 +31,7 @@ internal static class LegacyAnalysisCompatibility
     /// <param name="previewFromCreditsEndOverride">Whether the season derives previews from the
     /// credits end, which the current Credits hash carries; <see langword="null"/> uses
     /// <see cref="PluginConfiguration.AnimePreviewFromCreditsEnd"/>.</param>
+    /// <param name="seriesId">The series whose settings govern adoption.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see langword="true"/> if a record was rewritten; otherwise, <see langword="false"/>.</returns>
     internal static async Task<bool> UpgradeAsync(
@@ -39,6 +40,7 @@ internal static class LegacyAnalysisCompatibility
         PluginConfiguration config,
         IReadOnlySet<AnalysisMode>? excludedModes = null,
         bool? previewFromCreditsEndOverride = null,
+        Guid seriesId = default,
         CancellationToken cancellationToken = default)
     {
         var updated = false;
@@ -49,6 +51,7 @@ internal static class LegacyAnalysisCompatibility
             // and a 10.11 result under an older hash is not what the current settings produce.
             if (!AnalysisHelpers.IsSupported(mode)
                 || mode is AnalysisMode.Recap or AnalysisMode.Preview
+                || (mode == AnalysisMode.Introduction && config.StartsIntrosAtZero(seriesId))
                 || excludedModes?.Contains(mode) == true
                 || ((mode is AnalysisMode.Introduction or AnalysisMode.Credits)
                     && (ConfigHasher.NormalizeAudioLanguage(config.PreferredAudioLanguage).Length != 0

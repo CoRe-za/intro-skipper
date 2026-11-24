@@ -65,6 +65,7 @@ internal sealed partial class QueueVerifier
     /// <param name="previewFromCreditsEndOverride">Optional season-level setting for deriving a Preview segment from Credits.</param>
     /// <param name="subtitleRecapDetectionOverride">Optional season-level setting for subtitle recap detection.</param>
     /// <param name="subtitlePreviewDetectionOverride">Optional season-level setting for subtitle preview detection.</param>
+    /// <param name="seriesId">The series owning this season, for series-specific introduction settings.</param>
     public QueueVerifier(
         PluginConfiguration config,
         IReadOnlyCollection<AnalysisMode> modes,
@@ -74,7 +75,8 @@ internal sealed partial class QueueVerifier
         int? analysisLengthLimitOverride = null,
         bool? previewFromCreditsEndOverride = null,
         bool? subtitleRecapDetectionOverride = null,
-        bool? subtitlePreviewDetectionOverride = null)
+        bool? subtitlePreviewDetectionOverride = null,
+        Guid seriesId = default)
     {
         _config = config;
         _modes = modes;
@@ -118,7 +120,8 @@ internal sealed partial class QueueVerifier
                 subtitleRecapDetectionOverride,
                 subtitlePreviewDetectionOverride,
                 includeSubtitleSettings,
-                chapterSource);
+                chapterSource,
+                seriesId);
     }
 
     /// <summary>

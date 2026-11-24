@@ -616,6 +616,13 @@ public class PluginConfiguration : BasePluginConfiguration
     public int IntroStartOffset { get; set; }
 
     /// <summary>
+    /// Gets the series whose automatically detected introductions begin at zero.
+    /// Series ids are persisted as strings for XML configuration compatibility. Detection
+    /// and end adjustments run normally; no user-provided segment is rewritten.
+    /// </summary>
+    public Collection<string> IntroStartAtZeroSeriesIds { get; init; } = [];
+
+    /// <summary>
     /// Gets or sets the amount of credits at start to play (in seconds).
     /// </summary>
     public double CreditsStartOffset { get; set; }
@@ -787,6 +794,15 @@ public class PluginConfiguration : BasePluginConfiguration
     /// </returns>
     public long? RecordedFileVersion(QueuedEpisode episode, AnalysisMode mode)
         => ActiveSubtitlePattern(episode, mode) is null ? episode.FileVersion : episode.SubtitleFileVersion;
+
+    /// <summary>
+    /// Determines whether a resolved series has opted into zero-start introductions.
+    /// Empty or unrecognized ids never enable the rule, and GUID formatting is immaterial.
+    /// </summary>
+    /// <param name="seriesId">The series owning the episode.</param>
+    /// <returns>Whether the series has explicitly enabled the rule.</returns>
+    internal bool StartsIntrosAtZero(Guid seriesId)
+        => seriesId != Guid.Empty && IntroStartAtZeroSeriesIds.Any(value => Guid.TryParse(value, out var id) && id == seriesId);
 
     /// <summary>
     /// Replaces, in memory, a saved default the plugin has since changed with the current

@@ -26,6 +26,25 @@ using Xunit;
 
 public sealed class TestLegacyAnalysisCompatibility
 {
+    [Fact]
+    public async Task ZeroStartSeries_DoesNotAdoptAnUnadjustedLegacyIntro()
+    {
+        using var temp = new TempSegmentDb();
+        var config = Released1011Defaults();
+        var series = Guid.NewGuid();
+        config.IntroStartAtZeroSeriesIds.Add(series.ToString());
+        var id = Guid.NewGuid();
+        var season = Guid.NewGuid();
+        var hash = LegacyAnalysisCompatibility.AnalysisHash(config, AnalysisMode.Introduction, AnalyzerAction.Default, true, false);
+        await temp.Database.MarkItemsAnalyzedAsync(AnalysisMode.Introduction, [id], hash);
+        var snapshot = await temp.Database.GetSeasonQueueSnapshotAsync(season, [id]);
+
+        Assert.False(await LegacyAnalysisCompatibility.UpgradeAsync(temp.Database, snapshot, config, seriesId: series));
+        var episode = new QueuedEpisode { EpisodeId = id, SeriesId = series };
+        new QueueVerifier(config, [AnalysisMode.Introduction], snapshot, true, seriesId: series).Classify(episode);
+        Assert.Equal(EpisodeState.NotAnalyzed, episode.GetAnalyzed(AnalysisMode.Introduction));
+    }
+
     [Theory]
     [InlineData(AnalysisMode.Introduction, false, false, "D65089C5988650A1")]
     [InlineData(AnalysisMode.Introduction, true, false, "8DBCDDC0D7121940")]

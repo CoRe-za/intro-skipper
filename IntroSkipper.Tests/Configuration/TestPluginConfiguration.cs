@@ -15,6 +15,24 @@ namespace IntroSkipper.Tests;
 public class TestPluginConfiguration
 {
     [Fact]
+    public void SeriesIntroStartChoice_RoundTripsThroughBothConfigurationFormats()
+    {
+        var id = Guid.NewGuid().ToString("N");
+        var original = new PluginConfiguration { IntroStartAtZeroSeriesIds = [id] };
+        var json = JsonSerializer.Serialize(original);
+        var fromJson = Assert.IsType<PluginConfiguration>(JsonSerializer.Deserialize<PluginConfiguration>(json));
+        Assert.Equal(original.IntroStartAtZeroSeriesIds, fromJson.IntroStartAtZeroSeriesIds);
+
+        var serializer = new XmlSerializer(typeof(PluginConfiguration));
+        using var writer = new StringWriter();
+        serializer.Serialize(writer, original);
+        using var reader = new StringReader(writer.ToString());
+        var fromXml = Assert.IsType<PluginConfiguration>(serializer.Deserialize(reader));
+        Assert.Equal(original.IntroStartAtZeroSeriesIds, fromXml.IntroStartAtZeroSeriesIds);
+        Assert.True(fromXml.StartsIntrosAtZero(Guid.Parse(id)));
+    }
+
+    [Fact]
     public void XmlSerialization_RoundTripsStructuredExclusionListsWithCommaValues()
     {
         var serializer = new XmlSerializer(typeof(PluginConfiguration));

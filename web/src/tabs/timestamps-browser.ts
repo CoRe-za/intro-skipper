@@ -13,6 +13,7 @@ import type { StatusState } from "../components/async-feedback.ts";
 import { actionBar } from "../components/action-bar.ts";
 import { clickableCard } from "../components/clickable-card.ts";
 import { appendManageToggle } from "../components/manage-bar.ts";
+import { seriesIntroStart } from "../components/series-intro-start.ts";
 
 export const timestampsTab: Tab = {
     id: "timestamps",
@@ -239,6 +240,7 @@ function createTimestampsBrowser(container: HTMLElement, signal: AbortSignal): v
             return;
         }
 
+        contentEl.append(seriesIntroStart(show.Id, view));
         nav$.showDashboardLoading();
         try {
             const seasons = await getSeasons(show.Id, view);

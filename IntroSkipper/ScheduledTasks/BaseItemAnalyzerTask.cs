@@ -342,7 +342,8 @@ public partial class BaseItemAnalyzerTask(
                 ShouldDerivePreview(episode, Config),
                 episode.SubtitleRecapDetectionOverride,
                 episode.SubtitlePreviewDetectionOverride,
-                chapterSource: episode.ChaptersSource ?? Config.ChapterSource));
+                chapterSource: episode.ChaptersSource ?? Config.ChapterSource,
+                seriesId: episode.SeriesId));
         var completedSettledModes = new List<AnalysisMode>(settledResetModes.Count);
 
         try
@@ -655,7 +656,8 @@ public partial class BaseItemAnalyzerTask(
                 config,
                 GetLegacyHashAdoptionExclusions(candidates[0], config),
                 previewFromCreditsEnd,
-                cancellationToken).ConfigureAwait(false))
+                seriesId: candidates[0].SeriesId,
+                cancellationToken: cancellationToken).ConfigureAwait(false))
         {
             snapshot = await _database.GetSeasonQueueSnapshotAsync(candidates[0].SeasonId, [.. candidates.Select(c => c.EpisodeId)], cancellationToken).ConfigureAwait(false);
         }
@@ -669,7 +671,8 @@ public partial class BaseItemAnalyzerTask(
             candidates[0].AnalysisLengthLimitOverride,
             previewFromCreditsEnd,
             candidates[0].SubtitleRecapDetectionOverride,
-            candidates[0].SubtitlePreviewDetectionOverride);
+            candidates[0].SubtitlePreviewDetectionOverride,
+            seriesId: candidates[0].SeriesId);
         var sidecarFolders = new SubtitleSidecarFiles.FolderListings();
 
         foreach (var candidate in candidates)
@@ -798,7 +801,8 @@ public partial class BaseItemAnalyzerTask(
             ShouldDerivePreview(first, config),
             first.SubtitleRecapDetectionOverride,
             first.SubtitlePreviewDetectionOverride,
-            chapterSource: first.ChaptersSource);
+            chapterSource: first.ChaptersSource,
+            seriesId: first.SeriesId);
 
         if (action == AnalyzerAction.None)
         {

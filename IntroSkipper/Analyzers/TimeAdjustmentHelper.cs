@@ -141,6 +141,13 @@ internal sealed partial class TimeAdjustmentHelper(ILogger logger, PluginConfigu
             return new Segment(episode.EpisodeId);
         }
 
+        // Apply the series rule only to a valid, fully adjusted introduction. Its end,
+        // detector validation and automatic provenance are independent of this choice.
+        if (isIntroduction && _config.StartsIntrosAtZero(episode.SeriesId))
+        {
+            adjustedStart = 0;
+        }
+
         LogAdjustedIntro(_logger, episode.EpisodeId, episode.Name, adjustedStart, adjustedEnd);
 
         return new Segment(episode.EpisodeId)
