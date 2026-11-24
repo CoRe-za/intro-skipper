@@ -52,9 +52,13 @@ public sealed class PreviewSettingMigration(
             var resolution = _seasonResolver.ResolveLibrary(includeExcluded: true, stoppingToken, includePluginDisabled: true, countUnresolvedItems: true);
             if (resolution.Failures > 0)
             {
-                _logger.LogWarning(
-                    "Could not migrate the legacy post-credits preview choice for every library; {FailureCount} library, series or item resolutions failed. The migration will retry at the next server start.",
-                    resolution.Failures);
+                if (_logger.IsEnabled(LogLevel.Warning))
+                {
+                    _logger.LogWarning(
+                        "Could not migrate the legacy post-credits preview choice for every library; {FailureCount} library, series or item resolutions failed. The migration will retry at the next server start.",
+                        resolution.Failures);
+                }
+
                 return;
             }
 
