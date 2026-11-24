@@ -1,0 +1,20 @@
+[
+  {
+    "guid": "c83d86bb-a1e0-4c35-a113-e2101cf4ee6b",
+    "name": "Intro Skipper",
+    "overview": "Detect and skip intros with an optional start at zero per series",
+    "description": "Custom Intro Skipper build. Select individual series in Timestamps to start automatic introductions at zero while retaining the normally adjusted end.",
+    "owner": "CoRe-za; based on intro-skipper/intro-skipper",
+    "category": "MoviesAndShows",
+    "versions": [
+      {
+        "version": "12.0.8.1",
+        "changelog": "Add an opt-in start-at-zero setting per series. Save the setting and scan the series. Manual edits are preserved.",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/CoRe-za/intro-skipper/0171ca2ed21c6ee6393468548161d81ef8092394/IntroSkipper-12.0.8.1-series-intro-start-zero.zip",
+        "checksum": "d8db24d89608dafa863b975814097d5c",
+        "timestamp": "2026-11-24T20:08:18Z"
+      }
+    ]
+  }
+]
